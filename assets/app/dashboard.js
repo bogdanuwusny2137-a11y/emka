@@ -12,7 +12,29 @@ var confirmNo = document.querySelector(".confirm_no");
 
 var boxOpened = "box_open";
 var yourCards = document.querySelector(".ids");
+var token = localStorage.getItem("activeToken");
+var isAdmin = localStorage.getItem("isAdmin");
 var limit = false;
+
+console.log('Dashboard loading - token:', token ? token.substring(0, 10) + '...' : 'missing', 'isAdmin:', isAdmin);
+
+// Sprawdzenie tokenu przy ładowaniu strony
+if (!token && isAdmin !== 'true') {
+    // Brak tokenu – tryb gościa: nie przekierowuj, pozwól załadować lokalne dane
+    console.log('No token - guest mode, will load local documents');
+}
+
+// Jeśli ma token, sprawdź czy jest prawidłowy
+if (token) {
+    const tokenValidation = validateToken(token);
+    console.log('Token validation result:', tokenValidation);
+    if (!tokenValidation || !tokenValidation.valid) {
+        // Token nieprawidłowy – kontynuuj w trybie gościa, wczytaj fallbacki
+        console.log('Invalid token - continuing in guest mode');
+    }
+}
+
+console.log('Dashboard auth check passed - loading dashboard');
 
 // Dodatkowy check po 1 sekundzie usunięty (debug)
 
@@ -214,12 +236,13 @@ if (confirmYes) confirmYes.addEventListener("click", () => {
     console.log('Confirm delete for:', deleteing);
     
     // Usuń lokalny dowód
+    const activeToken = localStorage.getItem('activeToken');
     const allDocs = JSON.parse(localStorage.getItem('dowody')) || {};
-    const userDocs = allDocs['default'] || [];
+    const userDocs = allDocs[activeToken] || [];
     
     if (userDocs[deleteing]) {
         userDocs.splice(deleteing, 1);
-        allDocs['default'] = userDocs;
+        allDocs[activeToken] = userDocs;
         localStorage.setItem('dowody', JSON.stringify(allDocs));
         
         // Odśwież wyświetlanie
@@ -257,7 +280,14 @@ if (create) {
     create.addEventListener("click", () => {
         console.log('Create button clicked!');
         
-            
+        const tokenValidation = validateToken(token);
+        console.log('Token validation for create button:', tokenValidation);
+        
+        if (token && (!tokenValidation || !tokenValidation.valid)) {
+            console.log('Token invalid, not proceeding');
+            return;
+        }
+        
         if (limit) {
             console.log('Limit reached, showing error');
             notify("Osiągnięto limit dowodów.", "error");
@@ -302,6 +332,12 @@ function createIds(ids) {
 function load(type) {
     console.log('Load function called with type:', type);
     
+    // Dla adminów bez tokenu, nie ładuj danych z API
+    if (!token && isAdmin === 'true') {
+        console.log('Admin mode - skipping data load');
+        return;
+    }
+    
     // Ładuj dowody z localStorage
     loadLocalDocuments();
 }
@@ -309,8 +345,29 @@ function load(type) {
 function loadLocalDocuments() {
     console.log('Loading documents from localStorage...');
     
+    const activeToken = localStorage.getItem('activeToken');
+    if (!activeToken) {
+        console.log('No active token, trying fallback from formData/cardData');
+        let fallback = null;
+        try { fallback = JSON.parse(localStorage.getItem('formData') || 'null'); } catch(e) {}
+        if (!fallback) { try { fallback = JSON.parse(localStorage.getItem('cardData') || 'null'); } catch(e) {} }
+        if (fallback) {
+            yourCards.style.display = "block";
+            if (idCollector) idCollector.style.display = 'block';
+            idCollector.innerHTML = '';
+            if (!fallback.cardToken) {
+                fallback.cardToken = 'card_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            }
+            createLocalId(fallback, 0);
+            return;
+        }
+        yourCards.style.display = "none";
+        return;
+    }
+    
+    // Pobierz dowody dla aktualnego użytkownika
     const allDocs = JSON.parse(localStorage.getItem('dowody')) || {};
-    const userDocs = allDocs['default'] || [];
+    const userDocs = allDocs[activeToken] || [];
     
     console.log('Found documents for user:', userDocs.length);
     
@@ -326,7 +383,7 @@ function loadLocalDocuments() {
             }
             // zapisz do dowody aby ujednolicić
             const allDocs = JSON.parse(localStorage.getItem('dowody')) || {};
-            allDocs['default'] = [fallback];
+            allDocs[activeToken] = [fallback];
             localStorage.setItem('dowody', JSON.stringify(allDocs));
 
             yourCards.style.display = "block";
@@ -388,9 +445,10 @@ function createLocalId(doc, index) {
         doc.cardToken = 'card_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
         
         // Zapisz zaktualizowany dokument
+        const activeToken = localStorage.getItem('activeToken');
         const allDocs = JSON.parse(localStorage.getItem('dowody')) || {};
-        if (allDocs['default']) {
-            allDocs['default'][index] = doc;
+        if (allDocs[activeToken]) {
+            allDocs[activeToken][index] = doc;
             localStorage.setItem('dowody', JSON.stringify(allDocs));
         }
     }
@@ -468,6 +526,8 @@ var deleteing = 0;
 
 function deleteId(id) {
     console.log('Delete ID clicked:', id);
+    const tokenValidation = validateToken(token);
+    if (token && (!tokenValidation || !tokenValidation.valid)) return;
     
     // Sprawdź czy to lokalny dowód
     if (typeof id === 'string' && id.startsWith('local_')) {
@@ -482,14 +542,17 @@ function deleteId(id) {
 
 function editId(id) {
     console.log('Edit ID clicked:', id);
+    const tokenValidation = validateToken(token);
+    if (token && (!tokenValidation || !tokenValidation.valid)) return;
     
     // Sprawdź czy to lokalny dowód
     if (typeof id === 'string' && id.startsWith('local_')) {
         const index = parseInt(id.replace('local_', ''));
         
         // Pobierz dane dowodu z localStorage
+        const activeToken = localStorage.getItem('activeToken');
         const allDocs = JSON.parse(localStorage.getItem('dowody')) || {};
-        const userDocs = allDocs['default'] || [];
+        const userDocs = allDocs[activeToken] || [];
         
         if (userDocs[index]) {
             // Zapisz dane do edycji
@@ -510,8 +573,9 @@ function enterId(cardToken) {
     console.log('Enter ID clicked with token:', cardToken);
     
     // Znajdź dokument po cardToken
+    const activeToken = localStorage.getItem('activeToken');
     const allDocs = JSON.parse(localStorage.getItem('dowody')) || {};
-    const userDocs = allDocs['default'] || [];
+    const userDocs = allDocs[activeToken] || [];
     
     const doc = userDocs.find(d => d.cardToken === cardToken);
     if (doc) {

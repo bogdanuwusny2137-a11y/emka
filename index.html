@@ -109,19 +109,51 @@
 <body>
 <div class="redirect-container">
 <h1>PRYWATNY <span class="highlight">DOWÓD</span></h1>
-<p>Przekierowywanie do panelu...</p>
+<p>Przekierowywanie do nowej strony logowania...</p>
 <div class="spinner"></div>
 <p>Jeśli przekierowanie nie działa automatycznie:</p>
-<a class="manual-link" href="dashboard.html">Przejdź do panelu</a>
+<a class="manual-link" href="login.html">Przejdź do logowania</a>
 </div>
 <script>
-        window.location.href = 'dashboard.html';
+        // Sprawdź czy użytkownik jest już zalogowany
+        const activeToken = localStorage.getItem('activeToken');
+        const isAdmin = localStorage.getItem('isAdmin');
+        if (activeToken) {
+            // Jeśli ma token użytkownika, przekieruj do dashboard
+            window.location.href = 'dashboard.html';
+        } else if (isAdmin === 'true') {
+            // Jeśli jest adminem (ale bez tokenu użytkownika), sprawdź sesję
+            const adminSession = localStorage.getItem('adminSession');
+            if (adminSession) {
+                const sessionAge = Date.now() - parseInt(adminSession);
+                // Jeśli sesja admin jest ważna (mniej niż 24h), przekieruj do tokens
+                if (sessionAge < 24 * 60 * 60 * 1000) {
+                    window.location.href = 'tokens.html';
+                } else {
+                    // Sesja wygasła, wyczyść i przekieruj do logowania
+                    localStorage.removeItem('isAdmin');
+                    localStorage.removeItem('adminSession');
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 2000);
+                }
+            } else {
+                // Brak sesji admin, przekieruj do logowania
+                localStorage.removeItem('isAdmin');
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 2000);
+            }
+        } else {
+            // Brak jakiejkolwiek autoryzacji, przekieruj do logowania
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 2000);
+        }
     </script>
     <script>
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('service-worker.js')
-                .then(reg => console.log('SW registered'))
-                .catch(err => console.log('SW registration failed'));
+            navigator.serviceWorker.register('service-worker.js');
         }
     </script>
 </body>

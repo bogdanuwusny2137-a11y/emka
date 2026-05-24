@@ -1,1 +1,1 @@
-// manifest is already defined in assets/manifest.json
+// manifest defined in assets/manifest.json

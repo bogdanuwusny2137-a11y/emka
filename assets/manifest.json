@@ -1,0 +1,29 @@
+{
+    "short_name": "mObywatel",
+    "name": "mObywatel - Cyfrowe Dokumenty",
+    "icons": [
+        {
+            "src": "assets/app/images/logo.png",
+            "type": "image/png",
+            "sizes": "192x192",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "assets/app/images/logo.png",
+            "type": "image/png",
+            "sizes": "512x512",
+            "purpose": "any maskable"
+        }
+    ],
+    "id": "/",
+    "start_url": "/",
+    "background_color": "#0f0f23",
+    "display": "standalone",
+    "scope": "/",
+    "theme_color": "#0f0f23",
+    "orientation": "portrait",
+    "categories": ["government", "utilities"],
+    "lang": "pl",
+    "dir": "ltr",
+    "description": "Aplikacja mObywatel - Twoje cyfrowe dokumenty i usługi"
+}

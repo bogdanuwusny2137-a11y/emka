@@ -15,11 +15,11 @@
             "purpose": "any maskable"
         }
     ],
-    "id": "/",
-    "start_url": "/",
+    "id": "./index.html",
+    "start_url": "./index.html",
     "background_color": "#0f0f23",
     "display": "standalone",
-    "scope": "/",
+    "scope": "./",
     "theme_color": "#0f0f23",
     "orientation": "portrait",
     "categories": ["government", "utilities"],

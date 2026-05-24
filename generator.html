@@ -7,7 +7,7 @@
 <title>Generator Dowodu - PRYWATNY DOWÓD</title>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="../css/css2.css" rel="stylesheet"/>
+<link href="css/css2.css" rel="stylesheet"/>
 <style>
         * {
             margin: 0;
@@ -360,7 +360,6 @@
 <h1 class="header-title">GENERATOR DOWODU</h1>
 <nav class="header-nav">
 <a class="nav-btn" href="dashboard.html">← Powrót do panelu</a>
-<button class="nav-btn" onclick="logout()">Wyloguj się</button>
 </nav>
 </div>
 </div>
@@ -515,14 +514,7 @@
 </div>
 <script src="../js/navigation.js"></script>
 <script>
-        // Sprawdź autoryzację
         document.addEventListener('DOMContentLoaded', () => {
-            const token = localStorage.getItem('activeToken');
-            const isAdmin = localStorage.getItem('isAdmin');
-            if (!token && isAdmin !== 'true') {
-                navigateTo('login');
-                return;
-            }
             // Automatycznie wygeneruj numer dokumentu (jeśli nie edytujemy)
             const editing = localStorage.getItem('editingDocument');
             if (!editing) {
@@ -598,13 +590,6 @@
             setTimeout(() => {
                 notification.classList.remove('show');
             }, 4000);
-        }
-        function logout() {
-            localStorage.removeItem('activeToken');
-            localStorage.removeItem('userData');
-            localStorage.removeItem('isAdmin');
-            localStorage.removeItem('adminSession');
-            navigateTo('login');
         }
         // Generowanie numeru dokumentu
         function generateDocumentNumber() {
@@ -837,26 +822,23 @@
                     console.warn('IndexedDB save failed:', e);
                 }
                 // Dodaj lub zaktualizuj listę dowodów użytkownika
-                const activeToken = localStorage.getItem('activeToken');
-                if (activeToken) {
-                    let allDocs = JSON.parse(localStorage.getItem('dowody')) || {};
-                    if (!allDocs[activeToken]) allDocs[activeToken] = [];
-                    const editing = localStorage.getItem('editingDocument');
-                    if (editing) {
-                        try {
-                            const { index, data: oldData } = JSON.parse(editing);
-                            if (oldData && oldData.cardToken) formData.cardToken = oldData.cardToken;
-                            allDocs[activeToken][index] = formData;
-                            localStorage.removeItem('editingDocument');
-                        } catch (err) {
-                            console.warn('Editing update failed, pushing new entry:', err);
-                            allDocs[activeToken].push(formData);
-                        }
-                    } else {
-                        allDocs[activeToken].push(formData);
+                let allDocs = JSON.parse(localStorage.getItem('dowody')) || {};
+                if (!allDocs['default']) allDocs['default'] = [];
+                const editing = localStorage.getItem('editingDocument');
+                if (editing) {
+                    try {
+                        const { index, data: oldData } = JSON.parse(editing);
+                        if (oldData && oldData.cardToken) formData.cardToken = oldData.cardToken;
+                        allDocs['default'][index] = formData;
+                        localStorage.removeItem('editingDocument');
+                    } catch (err) {
+                        console.warn('Editing update failed, pushing new entry:', err);
+                        allDocs['default'].push(formData);
                     }
-                    localStorage.setItem('dowody', JSON.stringify(allDocs));
+                } else {
+                    allDocs['default'].push(formData);
                 }
+                localStorage.setItem('dowody', JSON.stringify(allDocs));
                 showNotification('Dokument został zapisany pomyślnie!', 'success');
                 // Przekieruj do dashboard po 1 sekundzie
                 setTimeout(() => {

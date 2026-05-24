@@ -35,7 +35,6 @@
                             <img class="login_arrow" src="assets/page/images/arrow.png">
                         </div>
                         <p class="login_action" onclick="location.href = '/dashboard'">Panel</p>
-                        <p class="login_action" onclick="localStorage.removeItem('activeToken'); location.href = 'login.html'">Wyloguj się</p>
                     </div>
                 </div>
             </div>
@@ -154,4 +153,11 @@
             });
         </script>
     
+<script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('service-worker.js')
+                .then(reg => console.log('SW registered'))
+                .catch(err => console.log('SW registration failed'));
+        }
+    </script>
 </body></html>

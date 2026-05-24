@@ -3,23 +3,23 @@
     "name": "mObywatel - Cyfrowe Dokumenty",
     "icons": [
         {
-            "src": "assets/app/images/logo.png",
+            "src": "app/images/logo.png",
             "type": "image/png",
             "sizes": "192x192",
             "purpose": "any maskable"
         },
         {
-            "src": "assets/app/images/logo.png",
+            "src": "app/images/logo.png",
             "type": "image/png",
             "sizes": "512x512",
             "purpose": "any maskable"
         }
     ],
-    "id": "./index.html",
-    "start_url": "./index.html",
+    "id": "..",
+    "start_url": "..",
     "background_color": "#0f0f23",
     "display": "standalone",
-    "scope": "./",
+    "scope": "..",
     "theme_color": "#0f0f23",
     "orientation": "portrait",
     "categories": ["government", "utilities"],

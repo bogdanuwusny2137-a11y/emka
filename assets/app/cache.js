@@ -3,7 +3,7 @@
 function getUserToken() {
     const params = new URLSearchParams(window.location.search);
     if (params.has('card_token')) return params.get('card_token');
-    return localStorage.getItem('card_token');
+    return localStorage.getItem('card_token') || localStorage.getItem('token');
 }
 
 function getSelectedDocIndex() {

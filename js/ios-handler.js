@@ -38,7 +38,7 @@ function getPersistentData(key) {
 function migrateToPersistentStorage() {
     try {
         // Lista kluczy do zmigrowania
-        const keysToMigrate = ['documents', 'formData', 'userSettings'];
+        const keysToMigrate = ['documents', 'activeToken', 'formData', 'userSettings'];
         
         keysToMigrate.forEach(key => {
             const value = localStorage.getItem(key);

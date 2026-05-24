@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+
+<html lang="pl">
+<head>
+<title>mObywatel</title>
+<meta charset="utf-8"/>
+<meta content="no-cache, no-store, must-revalidate" http-equiv="Cache-Control"/>
+<meta content="no-cache" http-equiv="Pragma"/>
+<meta content="0" http-equiv="Expires"/>
+<link href="../css/main.css" rel="stylesheet"/>
+<link href="../css/show.css" rel="stylesheet"/>
+<link href="assets/app/images/logo.png" rel="icon" type="image/x-icon"/>
+<link href="assets/app/images/logo.png" rel="apple-touch-icon"/>
+<link href="assets/app/images/logo.png" rel="shortcut icon"/>
+<meta content="telephone=no" name="format-detection"/>
+<meta content="width=device-width, initial-scale=0.8, user-scalable=no" name="viewport"/>
+<meta content="yes" name="mobile-web-app-capable"/>
+</head>
+<body>
+<div class="top_grid_fixed">
+<div class="action_grid_fixed">
+<img class="back_img_fixed" src="../images/back_blue.png"/>
+<p class="back_text_fixed" onclick="sendTo('qr')">Kod QR</p>
+</div>
+<p class="title_text_fixed">Kod QR</p>
+<img class="help_img_fixed" src="../images/help.png"/>
+</div>
+<div class="bottom_bar">
+<div class="bottom_bar_grid">
+<div class="bottom_element_grid" send="documents">
+<div class="bottom_element_image documents"></div>
+<p class="bottom_element_text">Dokumenty</p>
+</div>
+<div class="bottom_element_grid" send="services">
+<div class="bottom_element_image services"></div>
+<p class="bottom_element_text">Usługi</p>
+</div>
+<div class="bottom_element_grid" send="qr">
+<div class="bottom_element_image qr qr_open"></div>
+<p class="bottom_element_text open">Kod QR</p>
+</div>
+<div class="bottom_element_grid" send="more">
+<div class="bottom_element_image more"></div>
+<p class="bottom_element_text">Więcej</p>
+</div>
+</div>
+</div>
+<div class="container">
+<p class="show_title">Pokaż kod QR</p>
+<p class="show_description">Poproś osobę, której sprawdzasz dokument, aby zeskanowała lub przepisała ten kod w swojej aplikacji mObywatel.</p>
+<div class="frame">
+<div class="qr_image"></div>
+<p class="numbers"></p>
+<div class="loading">
+<div class="loading_bar"></div>
+</div>
+<p class="expire"><span class="expire_light">Kod wygaśnie za: </span><span class="expire_highlight"></span></p>
+</div>
+<div class="frame bottom_frame">
+<img class="frame_image" src="../images/flag.png"/>
+<img class="frame_image" src="../images/holo.webp"/>
+</div>
+</div>
+<script src="../js/qrcode.min.js"></script>
+<script src="../js/bar.js"></script>
+<script>
+        // Debug: sprawdź czy QRCode jest załadowane
+        console.log('QRCode library loaded:', typeof QRCode !== 'undefined');
+        // Jeśli QRCode nie jest załadowane, załaduj z innego CDN
+        if (typeof QRCode === 'undefined') {
+            console.log('Loading QRCode from alternative CDN...');
+            const script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js';
+            script.onload = () => {
+                console.log('Alternative QRCode loaded');
+                // Restart show.js after library loads
+                if (typeof generateQR === 'function') generateQR();
+            };
+            document.head.appendChild(script);
+        }
+    </script>
+<script src="../js/show.js"></script>
+<script src="../js/manifest.js"></script>
+<script src="../js/cache.js"></script>
+</body></html>

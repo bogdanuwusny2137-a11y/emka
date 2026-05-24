@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+
+<html lang="pl">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Generator Dowodu - PRYWATNY DOWÓD</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="../css/css2.css" rel="stylesheet"/>
+<style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --primary-color: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary-color: #ec4899;
+            --background-dark: #0f0f23;
+            --card-background: #1a1a2e;
+            --text-primary: #ffffff;
+            --text-secondary: #a1a1aa;
+            --error-color: #ef4444;
+            --success-color: #10b981;
+            --border-color: #374151;
+            --input-background: #111827;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--background-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        .header {
+            background: var(--card-background);
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .header-nav {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        .nav-btn {
+            padding: 8px 16px;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        .nav-btn:hover {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        .page-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .page-description {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        .form-section {
+            background: var(--card-background);
+            border-radius: 16px;
+            padding: 30px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 10px 25px var(--shadow-color);
+        }
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section-icon {
+            width: 24px;
+            height: 24px;
+            background: var(--primary-color);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--input-background);
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+        .form-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+        .form-input:invalid {
+            border-color: var(--error-color);
+        }
+        .form-input[readonly] {
+            background: rgba(17, 24, 39, 0.5);
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        .date-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 2fr;
+            gap: 10px;
+        }
+        .upload-section {
+            text-align: center;
+            padding: 40px 20px;
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+            background: var(--input-background);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .upload-section:hover {
+            border-color: var(--primary-color);
+            background: rgba(99, 102, 241, 0.05);
+        }
+        .upload-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--primary-color);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 24px;
+        }
+        .upload-text {
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        .upload-hint {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        .uploaded-image {
+            display: none;
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+        }
+        .generate-btn {
+            width: 100%;
+            max-width: 400px;
+            margin: 40px auto 0;
+            display: block;
+            padding: 16px 32px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            border: none;
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+        }
+        .generate-btn:active {
+            transform: translateY(0);
+        }
+        .generate-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .btn-loader {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top: 2px solid var(--text-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .generate-btn.loading .btn-text {
+            opacity: 0;
+        }
+        .generate-btn.loading .btn-loader {
+            opacity: 1;
+        }
+        @keyframes spin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        .clickable-field {
+            cursor: pointer;
+            position: relative;
+        }
+        .clickable-field::after {
+            content: '🔄';
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
+            opacity: 0.7;
+        }
+        .clickable-field:hover {
+            border-color: var(--secondary-color);
+        }
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 16px 20px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 500;
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            max-width: 350px;
+            box-shadow: 0 10px 25px var(--shadow-color);
+        }
+        .notification.show {
+            transform: translateX(0);
+        }
+        .notification.success {
+            background: var(--success-color);
+        }
+        .notification.error {
+            background: var(--error-color);
+        }
+        .notification.info {
+            background: var(--primary-color);
+        }
+        .full-width {
+            grid-column: 1 / -1;
+        }
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .header-nav {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .page-title {
+                font-size: 2rem;
+            }
+            .form-section {
+                padding: 20px;
+            }
+            .date-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px 10px;
+            }
+            .page-title {
+                font-size: 1.75rem;
+            }
+            .form-section {
+                padding: 15px;
+            }
+        }
+        .uploaded-image {
+            width: 120px;
+            height: 150px;
+            border-radius: 8px;
+            margin: 20px auto;
+            display: none;
+            object-fit: cover;
+            object-position: center top;
+            box-shadow: 0 4px 12px var(--shadow-color);
+        }
+    </style>
+</head>
+<body>
+<div class="header">
+<div class="header-content">
+<h1 class="header-title">GENERATOR DOWODU</h1>
+<nav class="header-nav">
+<a class="nav-btn" href="dashboard.html">← Powrót do panelu</a>
+<button class="nav-btn" onclick="logout()">Wyloguj się</button>
+</nav>
+</div>
+</div>
+<div class="container">
+<div class="page-header">
+<h1 class="page-title">Generator Dowodu Osobistego</h1>
+<p class="page-description">Wypełnij formularz, aby wygenerować swój dowód osobisty</p>
+</div>
+<form id="generatorForm">
+<div class="form-grid">
+<div class="form-section full-width">
+<h2 class="section-title">
+<span class="section-icon">📷</span>
+                        Zdjęcie
+                    </h2>
+<div class="upload-section" onclick="document.getElementById('file-upload').click()">
+<div class="upload-preview">
+<div class="upload-icon">📁</div>
+<p class="upload-text">Dodaj zdjęcie</p>
+<p class="upload-hint">Kliknij aby wybrać plik (JPG, PNG)</p>
+<img alt="Przesłane zdjęcie" class="uploaded-image" id="uploadedImage" style="display: none;"/>
+</div>
+</div>
+<input accept="image/*" id="file-upload" style="display: none" type="file"/>
+</div>
+<div class="form-section">
+<h2 class="section-title">
+<span class="section-icon">👤</span>
+                        Dane podstawowe
+                    </h2>
+<div class="form-group">
+<label class="form-label">Imię (imiona)</label>
+<input class="form-input" id="name" placeholder="Wprowadź imię" required="" type="text"/>
+</div>
+<div class="form-group">
+<label class="form-label">Nazwisko</label>
+<input class="form-input" id="surname" placeholder="Wprowadź nazwisko" required="" type="text"/>
+</div>
+<div class="form-group">
+<label class="form-label">Obywatelstwo</label>
+<input class="form-input" id="nationality" type="text" value="POLSKIE"/>
+</div>
+<div class="form-group">
+<label class="form-label">Płeć</label>
+<select class="form-input" id="sex" onchange="generatePesel()">
+<option value="M">Mężczyzna</option>
+<option value="K">Kobieta</option>
+</select>
+</div>
+<div class="form-group">
+<label class="form-label">PESEL (generowany automatycznie)</label>
+<input class="form-input" id="pesel" readonly="" type="text"/>
+</div>
+</div>
+<div class="form-section">
+<h2 class="section-title">
+<span class="section-icon">📅</span>
+                        Data urodzenia
+                    </h2>
+<div class="date-grid">
+<div class="form-group">
+<label class="form-label">Dzień</label>
+<input class="form-input" id="birthDay" max="31" min="1" onchange="generatePesel()" placeholder="DD" required="" type="number"/>
+</div>
+<div class="form-group">
+<label class="form-label">Miesiąc</label>
+<input class="form-input" id="birthMonth" max="12" min="1" onchange="generatePesel()" placeholder="MM" required="" type="number"/>
+</div>
+<div class="form-group">
+<label class="form-label">Rok</label>
+<input class="form-input" id="birthYear" onchange="generatePesel()" placeholder="RRRR" required="" type="number"/>
+</div>
+</div>
+</div>
+<div class="form-section">
+<h2 class="section-title">
+<span class="section-icon">👨‍👩‍👧‍👦</span>
+                        Dane rodziców
+                    </h2>
+<div class="form-group">
+<label class="form-label">Imię ojca</label>
+<input class="form-input" id="fatherName" placeholder="Wprowadź imię ojca" type="text"/>
+</div>
+<div class="form-group">
+<label class="form-label">Nazwisko ojca</label>
+<input class="form-input" id="fatherSurname" placeholder="Wprowadź nazwisko ojca" type="text"/>
+</div>
+<div class="form-group">
+<label class="form-label">Imię matki</label>
+<input class="form-input" id="motherName" placeholder="Wprowadź imię matki" type="text"/>
+</div>
+<div class="form-group">
+<label class="form-label">Nazwisko matki</label>
+<input class="form-input" id="motherSurname" placeholder="Wprowadź nazwisko matki" type="text"/>
+</div>
+</div>
+<div class="form-section">
+<h2 class="section-title">
+<span class="section-icon">🏠</span>
+                        Miejsce zamieszkania
+                    </h2>
+<div class="form-group">
+<label class="form-label">Ulica</label>
+<input class="form-input" id="street" placeholder="Nazwa ulicy" type="text"/>
+</div>
+<div class="form-group">
+<label class="form-label">Numer domu</label>
+<input class="form-input" id="houseNumber" placeholder="Nr domu" type="text"/>
+</div>
+<div class="form-group">
+<label class="form-label">Numer mieszkania</label>
+<input class="form-input" id="apartmentNumber" placeholder="Nr mieszkania (opcjonalnie)" type="text"/>
+</div>
+<div class="form-group">
+<label class="form-label">Kod pocztowy</label>
+<input class="form-input" id="postalCode" pattern="[0-9]{2}-[0-9]{3}" placeholder="XX-XXX" type="text"/>
+</div>
+<div class="form-group">
+<label class="form-label">Miejscowość</label>
+<input class="form-input" id="city" placeholder="Nazwa miejscowości" type="text"/>
+</div>
+</div>
+<div class="form-section full-width">
+<h2 class="section-title">
+<span class="section-icon">📄</span>
+                        Dane dokumentu
+                    </h2>
+<div class="form-grid" style="grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+<div class="form-group">
+<label class="form-label">Seria i numer</label>
+<input class="form-input clickable-field" id="seriesAndNumber" onclick="generateDocumentNumber()" placeholder="Kliknij aby wygenerować" readonly="" type="text"/>
+</div>
+<div class="form-group">
+<label class="form-label">Data wydania</label>
+<input class="form-input" id="givenDate" readonly="" type="text"/>
+</div>
+<div class="form-group">
+<label class="form-label">Termin ważności</label>
+<input class="form-input" id="expiryDate" readonly="" type="text"/>
+</div>
+</div>
+</div>
+</div>
+<button class="generate-btn" id="generateBtn" type="submit">
+<span class="btn-text">Generuj Dowód</span>
+<div class="btn-loader"></div>
+</button>
+</form>
+</div>
+<div class="notification" id="notification">
+<span id="notificationMessage"></span>
+</div>
+<script src="../js/navigation.js"></script>
+<script>
+        // Sprawdź autoryzację
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('activeToken');
+            const isAdmin = localStorage.getItem('isAdmin');
+            if (!token && isAdmin !== 'true') {
+                navigateTo('login');
+                return;
+            }
+            // Automatycznie wygeneruj numer dokumentu (jeśli nie edytujemy)
+            const editing = localStorage.getItem('editingDocument');
+            if (!editing) {
+                generateDocumentNumber();
+            }
+            // Prefill formularza w trybie edycji
+            try {
+                if (editing) {
+                    const { index, data } = JSON.parse(editing);
+                    // Zdjęcie
+                    if (data.image) {
+                        const uploadedImg = document.getElementById('uploadedImage');
+                        uploadedImg.src = data.image;
+                        uploadedImg.style.display = 'block';
+                    }
+                    // Dane podstawowe
+                    document.getElementById('name').value = data.name || '';
+                    document.getElementById('surname').value = data.surname || '';
+                    document.getElementById('nationality').value = data.nationality || 'POLSKIE';
+                    // Płeć
+                    const sexSelect = document.getElementById('sex');
+                    const sexText = (data.sex || '').toLowerCase();
+                    sexSelect.value = sexText.startsWith('m') ? 'M' : 'K';
+                    // Data urodzenia
+                    let bDay = '', bMonth = '', bYear = '';
+                    if (data.birthday && data.birthday.includes('.')) {
+                        const parts = data.birthday.split('.');
+                        bDay = parts[0];
+                        bMonth = parts[1];
+                        bYear = parts[2];
+                    } else if (data.birthDay && data.birthMonth && data.birthYear) {
+                        bDay = String(data.birthDay).padStart(2, '0');
+                        bMonth = String(data.birthMonth).padStart(2, '0');
+                        bYear = String(data.birthYear);
+                    }
+                    if (bDay) document.getElementById('birthDay').value = parseInt(bDay);
+                    if (bMonth) document.getElementById('birthMonth').value = parseInt(bMonth);
+                    if (bYear) document.getElementById('birthYear').value = parseInt(bYear);
+                    // Rodzice
+                    document.getElementById('fatherName').value = data.fathersName || data.fatherName || '';
+                    document.getElementById('fatherSurname').value = data.fathersSurname || data.fatherSurname || '';
+                    document.getElementById('motherName').value = data.mothersName || data.motherName || '';
+                    document.getElementById('motherSurname').value = data.mothersSurname || data.motherSurname || '';
+                    // Adres
+                    if (data.street) document.getElementById('street').value = data.street;
+                    if (data.houseNumber) document.getElementById('houseNumber').value = data.houseNumber;
+                    if (data.apartmentNumber) document.getElementById('apartmentNumber').value = data.apartmentNumber;
+                    if (data.postalCode) document.getElementById('postalCode').value = data.postalCode;
+                    if (data.city) document.getElementById('city').value = data.city;
+                    // Dane dokumentu
+                    if (data.seriesAndNumber) document.getElementById('seriesAndNumber').value = data.seriesAndNumber;
+                    if (data.givenDate) document.getElementById('givenDate').value = data.givenDate;
+                    if (data.expiryDate) document.getElementById('expiryDate').value = data.expiryDate;
+                    if (data.pesel) document.getElementById('pesel').value = data.pesel;
+                    // Zmień tekst przycisku
+                    const generateBtn = document.getElementById('generateBtn');
+                    const btnText = generateBtn.querySelector('.btn-text');
+                    if (btnText) btnText.textContent = 'Zapisz zmiany';
+                    // Przelicz zależne pola
+                    generatePesel();
+                    generateDatesFromBirth();
+                }
+            } catch (e) {
+                console.warn('Edit prefill failed:', e);
+            }
+        });
+        // Funkcje pomocnicze
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            const messageEl = document.getElementById('notificationMessage');
+            messageEl.textContent = message;
+            notification.className = `notification ${type} show`;
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 4000);
+        }
+        function logout() {
+            localStorage.removeItem('activeToken');
+            localStorage.removeItem('userData');
+            localStorage.removeItem('isAdmin');
+            localStorage.removeItem('adminSession');
+            navigateTo('login');
+        }
+        // Generowanie numeru dokumentu
+        function generateDocumentNumber() {
+            const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            let series = '';
+            for (let i = 0; i < 3; i++) {
+                series += letters.charAt(Math.floor(Math.random() * letters.length));
+            }
+            const number = String(Math.floor(Math.random() * 999999)).padStart(6, '0');
+            document.getElementById('seriesAndNumber').value = series + number;
+            // Nie narzucaj dat jeśli użytkownik je wpisał ręcznie lub są już policzone
+            if (!document.getElementById('givenDate').value || !document.getElementById('expiryDate').value) {
+                generateDatesFromBirth();
+            }
+            showNotification('Numer dokumentu został wygenerowany', 'success');
+        }
+        // Generowanie dat na podstawie daty urodzenia
+        function generateDatesFromBirth() {
+            const day = parseInt(document.getElementById('birthDay').value);
+            const month = parseInt(document.getElementById('birthMonth').value);
+            const year = parseInt(document.getElementById('birthYear').value);
+            if (!day || !month || !year) {
+                document.getElementById('givenDate').value = '';
+                document.getElementById('expiryDate').value = '';
+                return;
+            }
+            // Rok wydania to rok, w którym osoba kończy 18 lat
+            const yearOfIssue = year + 18;
+            // Data wydania: ten sam dzień i miesiąc co urodzenia, ale w roku ukończenia 18 lat
+            const issuedDate = new Date(yearOfIssue, month - 1, day);
+            // Termin ważności: ta sama data co wydania, ale 10 lat później (standardowy okres ważności dowodu)
+            const expDate = new Date(yearOfIssue + 10, month - 1, day);
+            document.getElementById('givenDate').value = formatDate(issuedDate);
+            document.getElementById('expiryDate').value = formatDate(expDate);
+        }
+        function formatDate(date) {
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            return `${day}.${month}.${year}`;
+        }
+        // Generowanie PESEL
+        function generatePesel() {
+            const year = parseInt(document.getElementById('birthYear')?.value);
+            const month = parseInt(document.getElementById('birthMonth')?.value);
+            const day = parseInt(document.getElementById('birthDay')?.value);
+            const sex = document.getElementById('sex')?.value;
+            if (!year || !month || !day || !sex) return;
+            const date = new Date(year, month - 1, day);
+            if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) {
+                document.getElementById('pesel').value = "Nieprawidłowa data";
+                return;
+            }
+            let monthInPesel = month;
+            if (year >= 2000 && year < 2100) monthInPesel += 20;
+            else if (year >= 2100 && year < 2200) monthInPesel += 40;
+            else if (year >= 2200 && year < 2300) monthInPesel += 60;
+            else if (year >= 1800 && year < 1900) monthInPesel += 80;
+            const yearStr = String(year).slice(-2).padStart(2, '0');
+            const monthStr = String(monthInPesel).padStart(2, '0');
+            const dayStr = String(day).padStart(2, '0');
+            const randomDigits = String(Math.floor(Math.random() * 999)).padStart(3, '0');
+            const sexDigit = sex === 'M' ? 
+                String(2 * Math.floor(Math.random() * 5) + 1) : 
+                String(2 * Math.floor(Math.random() * 5));
+            const peselWithoutChecksum = yearStr + monthStr + dayStr + randomDigits + sexDigit;
+            const weights = [1, 3, 7, 9, 1, 3, 7, 9, 1, 3];
+            let sum = 0;
+            for (let i = 0; i < 10; i++) {
+                sum += parseInt(peselWithoutChecksum[i]) * weights[i];
+            }
+            const checksum = (10 - (sum % 10)) % 10;
+            const fullPesel = peselWithoutChecksum + checksum;
+            document.getElementById('pesel').value = fullPesel;
+            // Automatycznie wygeneruj daty dokumentu
+            generateDatesFromBirth();
+        }
+        // Obsługa przesyłania zdjęcia
+        document.getElementById('file-upload').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const img = new Image();
+                    img.onload = function() {
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        // Wymiary docelowe 120x150 (proporcje dowodu)
+                        const TARGET_WIDTH = 120;
+                        const TARGET_HEIGHT = 150;
+                        canvas.width = TARGET_WIDTH;
+                        canvas.height = TARGET_HEIGHT;
+                        // Oblicz skalowanie zachowując proporcje
+                        const scale = Math.max(TARGET_WIDTH / img.width, TARGET_HEIGHT / img.height);
+                        const scaledWidth = img.width * scale;
+                        const scaledHeight = img.height * scale;
+                        // Wyśrodkowanie
+                        const x = (TARGET_WIDTH - scaledWidth) / 2;
+                        const y = (TARGET_HEIGHT - scaledHeight) / 2;
+                        // Narysuj przeskalowane i wyśrodkowane zdjęcie
+                        ctx.drawImage(img, x, y, scaledWidth, scaledHeight);
+                        // Konwersja na czarno-białe
+                        const imageData = ctx.getImageData(0, 0, TARGET_WIDTH, TARGET_HEIGHT);
+                        const data = imageData.data;
+                        for (let i = 0; i < data.length; i += 4) {
+                            const gray = data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114;
+                            data[i] = gray;     // red
+                            data[i + 1] = gray; // green
+                            data[i + 2] = gray; // blue
+                            // alpha pozostaje bez zmian
+                        }
+                        ctx.putImageData(imageData, 0, 0);
+                        const uploadedImg = document.getElementById('uploadedImage');
+                        uploadedImg.src = canvas.toDataURL('image/png', 1.0);
+                        uploadedImg.style.display = 'block';
+                        showNotification('Zdjęcie zostało dodane', 'success');
+                    };
+                    img.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        // Obsługa formularza
+        document.getElementById('generatorForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const generateBtn = document.getElementById('generateBtn');
+            generateBtn.classList.add('loading');
+            generateBtn.disabled = true;
+            try {
+                const uploadedImage = document.getElementById('uploadedImage');
+                if (!uploadedImage.src || uploadedImage.style.display === 'none') {
+                    throw new Error('Dodaj zdjęcie!');
+                }
+                const requiredFields = ['name', 'surname', 'birthDay', 'birthMonth', 'birthYear'];
+                let missingFields = [];
+                requiredFields.forEach(field => {
+                    const input = document.getElementById(field);
+                    if (!input.value) {
+                        input.style.borderColor = 'var(--error-color)';
+                        missingFields.push(field);
+                    } else {
+                        input.style.borderColor = 'var(--border-color)';
+                    }
+                });
+                if (missingFields.length > 0) {
+                    throw new Error('Wypełnij wszystkie wymagane pola!');
+                }
+                const birthDay = document.getElementById('birthDay').value;
+                const birthMonth = document.getElementById('birthMonth').value;
+                const birthYear = document.getElementById('birthYear').value;
+                const formData = {
+                    image: uploadedImage.src,
+                    name: document.getElementById('name').value,
+                    surname: document.getElementById('surname').value,
+                    nationality: document.getElementById('nationality').value,
+                    pesel: document.getElementById('pesel').value,
+                    sex: document.getElementById('sex').value === 'M' ? 'Mężczyzna' : 'Kobieta',
+                    birthday: `${String(birthDay).padStart(2, '0')}.${String(birthMonth).padStart(2, '0')}.${birthYear}`,
+                    birthDay: parseInt(birthDay),
+                    birthMonth: parseInt(birthMonth),
+                    birthYear: parseInt(birthYear),
+                    fathersName: document.getElementById('fatherName').value,
+                    mothersName: document.getElementById('motherName').value,
+                    fathersSurname: document.getElementById('fatherSurname').value,
+                    mothersSurname: document.getElementById('motherSurname').value,
+                    birthPlace: document.getElementById('city').value || 'WARSZAWA',
+                    city: document.getElementById('city').value || 'WARSZAWA',
+                    countryOfBirth: 'POLSKA',
+                    street: document.getElementById('street').value,
+                    houseNumber: document.getElementById('houseNumber').value,
+                    apartmentNumber: document.getElementById('apartmentNumber').value,
+                    postalCode: document.getElementById('postalCode').value,
+                    address: `${document.getElementById('street').value} ${document.getElementById('houseNumber').value}${document.getElementById('apartmentNumber').value ? '/' + document.getElementById('apartmentNumber').value : ''}, ${document.getElementById('postalCode').value} ${document.getElementById('city').value}`,
+                    seriesAndNumber: document.getElementById('seriesAndNumber').value,
+                    givenDate: document.getElementById('givenDate').value,
+                    expiryDate: document.getElementById('expiryDate').value,
+                    // Dodatkowe pola dla kompatybilności z card.html
+                    familyName: document.getElementById('surname').value,
+                    fathersFamilyName: document.getElementById('fatherSurname').value,
+                    mothersFamilyName: document.getElementById('motherSurname').value,
+                    address1: `${document.getElementById('street').value} ${document.getElementById('houseNumber').value}${document.getElementById('apartmentNumber').value ? '/' + document.getElementById('apartmentNumber').value : ''}`,
+                    address2: `${document.getElementById('postalCode').value} ${document.getElementById('city').value}`
+                };
+                // Zapisz dane lokalnie w różnych formatach dla kompatybilności
+                localStorage.setItem('formData', JSON.stringify(formData));
+                localStorage.setItem('cardData', JSON.stringify(formData));
+                // Zapisz poszczególne pola dla card.html i document.html
+                Object.keys(formData).forEach(key => {
+                    localStorage.setItem(key, formData[key]);
+                });
+                localStorage.setItem('photo', formData.image);
+                localStorage.setItem('birthday', formData.birthday);
+                // Debug: sprawdź czy daty są zapisane
+                console.log('Saved dates to localStorage:', {
+                    givenDate: localStorage.getItem('givenDate'),
+                    expiryDate: localStorage.getItem('expiryDate')
+                });
+                // Zapisz dane w formacie oczekiwanym przez bar.js
+                const barData = {
+                    data: 'data',
+                    name: formData.name,
+                    surname: formData.surname,
+                    nationality: formData.nationality,
+                    fathersName: formData.fathersName,
+                    mothersName: formData.mothersName,
+                    familyName: formData.surname,
+                    sex: document.getElementById('sex').value === 'M' ? 'm' : 'k',
+                    fathersFamilyName: formData.fathersSurname,
+                    mothersFamilyName: formData.mothersSurname,
+                    birthPlace: formData.birthPlace,
+                    countryOfBirth: formData.countryOfBirth,
+                    address1: formData.address1,
+                    address2: formData.address2,
+                    city: formData.city,
+                    day: parseInt(birthDay),
+                    month: parseInt(birthMonth),
+                    year: parseInt(birthYear)
+                };
+                // Zapisz obraz osobno
+                const imageData = {
+                    data: 'image',
+                    image: uploadedImage.src
+                };
+                // Zapisz do IndexedDB jeśli dostępne
+                try {
+                    const db = await getDb();
+                    await saveData(db, barData);
+                    await saveData(db, imageData);
+                } catch (e) {
+                    console.warn('IndexedDB save failed:', e);
+                }
+                // Dodaj lub zaktualizuj listę dowodów użytkownika
+                const activeToken = localStorage.getItem('activeToken');
+                if (activeToken) {
+                    let allDocs = JSON.parse(localStorage.getItem('dowody')) || {};
+                    if (!allDocs[activeToken]) allDocs[activeToken] = [];
+                    const editing = localStorage.getItem('editingDocument');
+                    if (editing) {
+                        try {
+                            const { index, data: oldData } = JSON.parse(editing);
+                            if (oldData && oldData.cardToken) formData.cardToken = oldData.cardToken;
+                            allDocs[activeToken][index] = formData;
+                            localStorage.removeItem('editingDocument');
+                        } catch (err) {
+                            console.warn('Editing update failed, pushing new entry:', err);
+                            allDocs[activeToken].push(formData);
+                        }
+                    } else {
+                        allDocs[activeToken].push(formData);
+                    }
+                    localStorage.setItem('dowody', JSON.stringify(allDocs));
+                }
+                showNotification('Dokument został zapisany pomyślnie!', 'success');
+                // Przekieruj do dashboard po 1 sekundzie
+                setTimeout(() => {
+                    navigateTo('dashboard');
+                }, 1000);
+            } catch (error) {
+                showNotification(error.message, 'error');
+            } finally {
+                generateBtn.classList.remove('loading');
+                generateBtn.disabled = false;
+            }
+        });
+        // Funkcje pomocnicze dla IndexedDB (kopiowane z bar.js)
+        function getDb(){
+            return new Promise((resolve, reject) => {
+                var request = window.indexedDB.open('fobywatel', 1);
+                request.onerror = (event) => {
+                    reject(event.target.error)
+                }
+                var name = 'data';
+                request.onupgradeneeded = (event) => {
+                    var db = event.target.result;
+                    if (!db.objectStoreNames.contains(name)){
+                        db.createObjectStore(name, {
+                            keyPath: name
+                        })
+                    }
+                }
+                request.onsuccess = (event) => {
+                    var db = event.target.result;
+                    resolve(db);
+                }
+            })
+        }
+        function saveData(db, data){
+            return new Promise((resolve, reject) => {
+                var name = 'data';
+                var transaction = db.transaction(name, 'readwrite');
+                var store = transaction.objectStore(name);
+                var request = store.put(data);
+                request.onsuccess = () => {
+                    resolve();
+                }
+                request.onerror = (event) => {
+                    reject(event.target.error)
+                }
+            });
+        }
+        // Walidacja dat w czasie rzeczywistym
+        ['birthDay', 'birthMonth', 'birthYear'].forEach(id => {
+            const input = document.getElementById(id);
+            if (input) {
+                input.addEventListener('input', function() {
+                    if (this.value.length > 0) {
+                        let num = parseInt(this.value);
+                        if (this.min && num < parseInt(this.min)) this.value = this.min;
+                        if (this.max && num > parseInt(this.max)) this.value = this.max;
+                    }
+                    generatePesel();
+                });
+            }
+        });
+        // Formatowanie kodu pocztowego
+        const postalCodeInput = document.getElementById('postalCode');
+        if (postalCodeInput) {
+            postalCodeInput.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                if (value.length >= 2) {
+                    value = value.substring(0, 2) + '-' + value.substring(2, 5);
+                }
+                e.target.value = value;
+            });
+        }
+    </script>
+</body>
+</html>

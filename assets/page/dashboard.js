@@ -236,7 +236,7 @@ if (confirmYes) confirmYes.addEventListener("click", () => {
     console.log('Confirm delete for:', deleteing);
     
     // Usuń lokalny dowód
-    const activeToken = localStorage.getItem('activeToken');
+    const activeToken = localStorage.getItem('activeToken') || 'default';
     const allDocs = JSON.parse(localStorage.getItem('dowody')) || {};
     const userDocs = allDocs[activeToken] || [];
     
@@ -345,7 +345,7 @@ function load(type) {
 function loadLocalDocuments() {
     console.log('Loading documents from localStorage...');
     
-    const activeToken = localStorage.getItem('activeToken');
+    var activeToken = localStorage.getItem('activeToken');
     if (!activeToken) {
         console.log('No active token, trying fallback from formData/cardData');
         let fallback = null;
@@ -366,8 +366,19 @@ function loadLocalDocuments() {
     }
     
     // Pobierz dowody dla aktualnego użytkownika
+    var activeKey = activeToken || 'default';
     const allDocs = JSON.parse(localStorage.getItem('dowody')) || {};
-    const userDocs = allDocs[activeToken] || [];
+    // Fallback: jeśli nie ma dokumentów pod activeToken, sprawdź 'default'
+    var userDocs = allDocs[activeKey] || [];
+    if (userDocs.length === 0 && activeKey !== 'default') {
+        userDocs = allDocs['default'] || [];
+        if (userDocs.length > 0) {
+            // Przenieś na aktywny klucz
+            allDocs[activeKey] = userDocs;
+            delete allDocs['default'];
+            localStorage.setItem('dowody', JSON.stringify(allDocs));
+        }
+    }
     
     console.log('Found documents for user:', userDocs.length);
     
@@ -393,21 +404,25 @@ function loadLocalDocuments() {
             return;
         }
         // Fallback 2: poszukaj dowodów zapisanych pod innymi tokenami
-        const allDocsObj = JSON.parse(localStorage.getItem('dowody') || '{}');
-        const anyDocs = Object.values(allDocsObj).flat();
-        if (anyDocs.length > 0) {
-            const first = anyDocs[0];
-            yourCards.style.display = "block";
-            if (idCollector) idCollector.style.display = 'block';
-            idCollector.innerHTML = '';
-            if (!first.cardToken) {
-                first.cardToken = 'card_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        var allDocsObj = JSON.parse(localStorage.getItem('dowody') || '{}');
+        var found = false;
+        for (var k in allDocsObj) {
+            if (allDocsObj[k] && allDocsObj[k].length > 0) {
+                found = true;
+                // Przenieś na aktywny klucz
+                allDocsObj[activeKey] = allDocsObj[k];
+                if (k !== activeKey) delete allDocsObj[k];
+                localStorage.setItem('dowody', JSON.stringify(allDocsObj));
+                userDocs = allDocsObj[activeKey];
+                break;
             }
-            createLocalId(first, 0);
+        }
+        if (found) {
+            // kontynuuj normalne wyświetlanie poniżej
+        } else {
+            yourCards.style.display = "none";
             return;
         }
-        yourCards.style.display = "none";
-        return;
     }
     
     // Wyświetl dowody
@@ -445,7 +460,7 @@ function createLocalId(doc, index) {
         doc.cardToken = 'card_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
         
         // Zapisz zaktualizowany dokument
-        const activeToken = localStorage.getItem('activeToken');
+        var activeToken = localStorage.getItem('activeToken') || 'default';
         const allDocs = JSON.parse(localStorage.getItem('dowody')) || {};
         if (allDocs[activeToken]) {
             allDocs[activeToken][index] = doc;
@@ -550,7 +565,7 @@ function editId(id) {
         const index = parseInt(id.replace('local_', ''));
         
         // Pobierz dane dowodu z localStorage
-        const activeToken = localStorage.getItem('activeToken');
+        const activeToken = localStorage.getItem('activeToken') || 'default';
         const allDocs = JSON.parse(localStorage.getItem('dowody')) || {};
         const userDocs = allDocs[activeToken] || [];
         
@@ -573,7 +588,7 @@ function enterId(cardToken) {
     console.log('Enter ID clicked with token:', cardToken);
     
     // Znajdź dokument po cardToken
-    const activeToken = localStorage.getItem('activeToken');
+    const activeToken = localStorage.getItem('activeToken') || 'default';
     const allDocs = JSON.parse(localStorage.getItem('dowody')) || {};
     const userDocs = allDocs[activeToken] || [];
     

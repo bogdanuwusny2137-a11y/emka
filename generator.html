@@ -823,20 +823,21 @@
                 }
                 // Dodaj lub zaktualizuj listę dowodów użytkownika
                 let allDocs = JSON.parse(localStorage.getItem('dowody')) || {};
-                if (!allDocs['default']) allDocs['default'] = [];
+                var activeToken = localStorage.getItem('activeToken') || 'default';
+                if (!allDocs[activeToken]) allDocs[activeToken] = [];
                 const editing = localStorage.getItem('editingDocument');
                 if (editing) {
                     try {
                         const { index, data: oldData } = JSON.parse(editing);
                         if (oldData && oldData.cardToken) formData.cardToken = oldData.cardToken;
-                        allDocs['default'][index] = formData;
+                        allDocs[activeToken][index] = formData;
                         localStorage.removeItem('editingDocument');
                     } catch (err) {
                         console.warn('Editing update failed, pushing new entry:', err);
-                        allDocs['default'].push(formData);
+                        allDocs[activeToken].push(formData);
                     }
                 } else {
-                    allDocs['default'].push(formData);
+                    allDocs[activeToken].push(formData);
                 }
                 localStorage.setItem('dowody', JSON.stringify(allDocs));
                 showNotification('Dokument został zapisany pomyślnie!', 'success');

@@ -39,7 +39,7 @@ function syncFormData() {
 
     // Jeżeli wskazano doc_index i mamy kilka pasujących (teoretycznie), wybierz indeks
     const docIndex = getSelectedDocIndex();
-    if (!selectedDoc && allDocs.length > docIndex) {
+    if (!selectedDoc && allDocs && allDocs.length > docIndex) {
         selectedDoc = allDocs[docIndex];
     }
 

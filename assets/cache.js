@@ -21,7 +21,7 @@ function syncFormData() {
     let allDocsObj = {};
     try { allDocsObj = JSON.parse(localStorage.getItem('dowody') || '{}'); } catch (e) { allDocsObj = {}; }
 
-    // Spłaszcz wszystkie dokumenty
+    // Spłaszcz wszystkie dokumenty z wszystkich kluczy
     const allDocs = Object.values(allDocsObj).flat().filter(Boolean);
 
     // Szukaj po cardToken
@@ -39,7 +39,7 @@ function syncFormData() {
 
     // Jeżeli wskazano doc_index i mamy kilka pasujących (teoretycznie), wybierz indeks
     const docIndex = getSelectedDocIndex();
-    if (!selectedDoc && allDocs.length > docIndex) {
+    if (!selectedDoc && allDocs && allDocs.length > docIndex) {
         selectedDoc = allDocs[docIndex];
     }
 

@@ -7,24 +7,24 @@
 <meta content="no-cache, no-store, must-revalidate" http-equiv="Cache-Control"/>
 <meta content="no-cache" http-equiv="Pragma"/>
 <meta content="0" http-equiv="Expires"/>
-<link href="../css/main.css" rel="stylesheet"/>
-<link href="../css/scan.css" rel="stylesheet"/>
+<link href="css/main.css" rel="stylesheet"/>
+<link href="css/scan.css" rel="stylesheet"/>
 <link href="assets/app/images/logo.png" rel="icon" type="image/x-icon"/>
 <link href="assets/app/images/logo.png" rel="apple-touch-icon"/>
 <link href="assets/app/images/logo.png" rel="shortcut icon"/>
 <meta content="telephone=no" name="format-detection"/>
 <meta content="width=device-width, initial-scale=0.8, user-scalable=no" name="viewport"/>
 <meta content="yes" name="mobile-web-app-capable"/>
-<script src="../js/html5-qrcode.js"></script>
+<script src="js/html5-qrcode.js"></script>
 </head>
 <body>
 <div class="top_grid_fixed">
 <div class="action_grid_fixed">
-<img class="back_img_fixed" src="../images/back_blue.png"/>
+<img class="back_img_fixed" src="images/back_blue.png"/>
 <p class="back_text_fixed" onclick="sendTo('qr')">Kod QR</p>
 </div>
 <p class="title_text_fixed">Zeskanuj kod QR</p>
-<img class="help_img_fixed" src="../images/help.png"/>
+<img class="help_img_fixed" src="images/help.png"/>
 </div>
 <div class="container">
 <p class="description">Umieść kod QR w ramce, aby go zeskanować.</p>
@@ -85,7 +85,7 @@
 <button class="code-input-submit" disabled="" onclick="submitCode()">Dalej</button>
 </div>
 </div>
-<script src="../js/bar.js"></script>
+<script src="js/bar.js"></script>
 <script>
         if (localStorage.getItem('top') === 'card'){
             var back = document.querySelector('.back_text_fixed');
@@ -205,7 +205,7 @@
             submitButton.disabled = e.target.value.length !== 6;
         });
     </script>
-<script src="../js/manifest.js"></script>
-<script src="../js/cache.js"></script>
+<script src="js/manifest.js"></script>
+<script src="js/cache.js"></script>
 </body>
 </html>

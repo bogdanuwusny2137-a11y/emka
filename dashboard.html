@@ -53,40 +53,6 @@
             </div>
         </div>
 
-        <div class="guide box">
-            <div class="box_opacity"></div>
-            <div class="box_panel">
-                <p class="guide_title">INSTRUKCJA INSTALACJI</p>
-                <div class="guide_grid">
-                    <div class="guide_type">
-                        <p class="guide_type_title">Dla systemu android</p>
-                        <ul class="guide_list">
-                            <li>Stwórz dowód i kliknij wejdź</li>
-                            <li>Upewnij się, że używasz przeglądarki Chrome</li>
-                            <li>Kliknij 3 kropki, a potem dodaj do ekranu głównego</li>
-                        </ul>
-                    </div>
-                    <div class="guide_type">
-                        <p class="guide_type_title">Dla systemu IOS</p>
-                        <ul class="guide_list">
-                            <li>Stwórz dowód i kliknij wejdź</li>
-                            <li>Upewnij się, że używasz przeglądarki Safari</li>
-                            <li>Kliknij udostępnij, a potem dodaj do ekranu głównego</li>
-                        </ul>
-                    </div>
-                    <div class="guide_type">
-                        <p class="guide_type_title">Dla telefonu samsung</p>
-                        <ul class="guide_list">
-                            <li>Stwórz dowód i kliknij wejdź</li>
-                            <li>Upewnij się, że używasz przeglądarki Internet</li>
-                            <li>Kliknij 3 paski, a potem dodaj do ekranu głównego</li>
-                        </ul>
-                    </div>
-                </div>
-                <p class="guide_close">Rozumiem</p>
-            </div>
-        </div>
-
         <div class="container">
             <p class="welcome">WITAJ W PANELU</p>
             <p class="description">Wybierz, co chcesz zrobić.</p>
@@ -101,12 +67,6 @@
                     <div class="image_button_grid">
                         <img class="image_button_image" src="assets/page/images/admin.svg">
                         <p class="image_button_text">Panel administratora</p>
-                    </div>
-                </div>
-                <div class="image_button guide_button">
-                    <div class="image_button_grid">
-                        <img class="image_button_image" src="assets/page/images/guide.svg">
-                        <p class="image_button_text">Instrukcja</p>
                     </div>
                 </div>
             </div>
@@ -133,7 +93,6 @@
                 // Backup event listeners dla przycisków, na wypadek gdyby inne skrypty je nadpisały
                 setTimeout(() => {
                     const createBtn = document.querySelector('.create');
-                    const guideBtn = document.querySelector('.guide_button');
                     
                     // Dodaj onclick jako backup, jeśli addEventListener nie działa
                     if (createBtn && !createBtn.onclick) {
@@ -142,14 +101,7 @@
                         };
                     }
                     
-                    if (guideBtn && !guideBtn.onclick) {
-                        guideBtn.onclick = function() {
-                            const guide = document.querySelector('.guide');
-                            if (guide) {
-                                guide.classList.add('box_open');
-                            }
-                        };
-                    }
+
                 }, 1000);
             });
         </script>

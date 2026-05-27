@@ -347,7 +347,23 @@ function loadLocalDocuments() {
     
     var activeToken = localStorage.getItem('activeToken');
     if (!activeToken) {
-        console.log('No active token, trying fallback from formData/cardData');
+        console.log('No active token, checking dowody[default]');
+        const allDocs = JSON.parse(localStorage.getItem('dowody')) || {};
+        const defaultDocs = allDocs['default'] || [];
+        if (defaultDocs.length > 0) {
+            console.log('Found default documents:', defaultDocs.length);
+            yourCards.style.display = "block";
+            if (idCollector) idCollector.style.display = 'block';
+            idCollector.innerHTML = '';
+            defaultDocs.forEach((doc, index) => {
+                if (!doc.cardToken) {
+                    doc.cardToken = 'card_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                }
+                createLocalId(doc, index);
+            });
+            return;
+        }
+        console.log('No default docs, trying fallback from formData/cardData');
         let fallback = null;
         try { fallback = JSON.parse(localStorage.getItem('formData') || 'null'); } catch(e) {}
         if (!fallback) { try { fallback = JSON.parse(localStorage.getItem('cardData') || 'null'); } catch(e) {} }
@@ -462,10 +478,9 @@ function createLocalId(doc, index) {
         // Zapisz zaktualizowany dokument
         var activeToken = localStorage.getItem('activeToken') || 'default';
         const allDocs = JSON.parse(localStorage.getItem('dowody')) || {};
-        if (allDocs[activeToken]) {
-            allDocs[activeToken][index] = doc;
-            localStorage.setItem('dowody', JSON.stringify(allDocs));
-        }
+        if (!allDocs[activeToken]) allDocs[activeToken] = [];
+        allDocs[activeToken][index] = doc;
+        localStorage.setItem('dowody', JSON.stringify(allDocs));
     }
     
     var temp = template;

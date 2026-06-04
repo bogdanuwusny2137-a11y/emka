@@ -102,14 +102,6 @@ function notify(message, type = 'info') {
 
 // Check authentication status
 function checkAuth() {
-    const activeToken = localStorage.getItem('activeToken');
-    const isAdmin = localStorage.getItem('isAdmin');
-    
-    if (!activeToken && isAdmin !== 'true') {
-        navigateTo('login');
-        return false;
-    }
-    
     return true;
 }
 

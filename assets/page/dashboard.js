@@ -12,8 +12,8 @@ var confirmNo = document.querySelector(".confirm_no");
 
 var boxOpened = "box_open";
 var yourCards = document.querySelector(".ids");
-var token = localStorage.getItem("activeToken");
-var isAdmin = localStorage.getItem("isAdmin");
+var token = safeGetItem("activeToken") || localStorage.getItem("activeToken");
+var isAdmin = safeGetItem("isAdmin") || localStorage.getItem("isAdmin");
 var limit = false;
 
 console.log('Dashboard loading - token:', token ? token.substring(0, 10) + '...' : 'missing', 'isAdmin:', isAdmin);
@@ -105,7 +105,7 @@ if (guideOpacity) {
 // Funkcja edycji dokumentu
 function editDocument(index) {
     try {
-        const docs = JSON.parse(localStorage.getItem('documents') || '[]');
+        const docs = JSON.parse(safeGetItem('documents') || '[]');
         const doc = docs[index];
         if (!doc) {
             console.error('Document not found at index:', index);
@@ -113,7 +113,7 @@ function editDocument(index) {
         }
         
         // Zapisz dane do edycji
-        localStorage.setItem('editingDocument', JSON.stringify({ index, data: doc }));
+        safeSetItem('editingDocument', JSON.stringify({ index, data: doc }));
         
         // Przekieruj do generatora
         window.location.href = 'generator.html';
@@ -126,7 +126,7 @@ function editDocument(index) {
 // Funkcja usuwania dokumentu
 function deleteDocument(index) {
     try {
-        const docs = JSON.parse(localStorage.getItem('documents') || '[]');
+        const docs = JSON.parse(safeGetItem('documents') || '[]');
         if (index < 0 || index >= docs.length) {
             console.error('Invalid document index:', index);
             return;
@@ -137,7 +137,7 @@ function deleteDocument(index) {
         // Obsługa potwierdzenia usunięcia
         const handleDelete = () => {
             docs.splice(index, 1);
-            localStorage.setItem('documents', JSON.stringify(docs));
+            safeSetItem('documents', JSON.stringify(docs));
             confirm.classList.remove(boxOpened);
             notify('Dokument został usunięty', 'success');
             loadLocalDocuments(); // Odśwież listę
@@ -146,7 +146,7 @@ function deleteDocument(index) {
             confirmYes.removeEventListener('click', handleDelete);
             confirmNo.removeEventListener('click', handleCancel);
         };
-        
+
         // Obsługa anulowania
         const handleCancel = () => {
             confirm.classList.remove(boxOpened);
@@ -194,9 +194,9 @@ function addDocumentToList(doc, index) {
 }
 
 // Funkcja ładowania dokumentów
-function loadLocalDocuments() {
+function loadLocalDocuments_old() {
     try {
-        const docs = JSON.parse(localStorage.getItem('documents') || '[]');
+        const docs = JSON.parse(safeGetItem('documents') || '[]');
         yourCards.innerHTML = ''; // Wyczyść listę
         
         docs.forEach((doc, index) => {
@@ -236,14 +236,14 @@ if (confirmYes) confirmYes.addEventListener("click", () => {
     console.log('Confirm delete for:', deleteing);
     
     // Usuń lokalny dowód
-    const activeToken = localStorage.getItem('activeToken') || 'default';
-    const allDocs = JSON.parse(localStorage.getItem('dowody')) || {};
+    const activeToken = safeGetItem('activeToken') || 'default';
+    const allDocs = JSON.parse(safeGetItem('dowody') || '{}');
     const userDocs = allDocs[activeToken] || [];
     
     if (userDocs[deleteing]) {
         userDocs.splice(deleteing, 1);
         allDocs[activeToken] = userDocs;
-        localStorage.setItem('dowody', JSON.stringify(allDocs));
+        safeSetItem('dowody', JSON.stringify(allDocs));
         
         // Odśwież wyświetlanie
         loadLocalDocuments();
@@ -343,118 +343,122 @@ function load(type) {
 }
 
 function loadLocalDocuments() {
-    console.log('Loading documents from localStorage...');
+    console.log('Loading documents from storage...');
     
-    var activeToken = localStorage.getItem('activeToken');
-    if (!activeToken) {
-        console.log('No active token, checking dowody[default]');
-        const allDocs = JSON.parse(localStorage.getItem('dowody')) || {};
-        const defaultDocs = allDocs['default'] || [];
-        if (defaultDocs.length > 0) {
-            console.log('Found default documents:', defaultDocs.length);
-            yourCards.style.display = "block";
-            if (idCollector) idCollector.style.display = 'block';
-            idCollector.innerHTML = '';
-            defaultDocs.forEach((doc, index) => {
-                if (!doc.cardToken) {
-                    doc.cardToken = 'card_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-                }
-                createLocalId(doc, index);
-            });
+    // Najpierw async, potem sync fallback
+    safeGetDocs().then(function(userDocs) {
+        if (userDocs && userDocs.length > 0) {
+            renderDocuments(userDocs);
             return;
         }
-        console.log('No default docs, trying fallback from formData/cardData');
-        let fallback = null;
-        try { fallback = JSON.parse(localStorage.getItem('formData') || 'null'); } catch(e) {}
-        if (!fallback) { try { fallback = JSON.parse(localStorage.getItem('cardData') || 'null'); } catch(e) {} }
-        if (fallback) {
-            yourCards.style.display = "block";
-            if (idCollector) idCollector.style.display = 'block';
-            idCollector.innerHTML = '';
-            if (!fallback.cardToken) {
-                fallback.cardToken = 'card_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        // Sync fallback z localStorage
+        var activeToken = safeGetItem('activeToken') || localStorage.getItem('activeToken');
+        if (!activeToken) {
+            tryDefaultDocs();
+            return;
+        }
+        tryUserDocs(activeToken);
+    }).catch(function() {
+        // Sync fallback
+        var activeToken = safeGetItem('activeToken') || localStorage.getItem('activeToken');
+        if (!activeToken) {
+            tryDefaultDocs();
+            return;
+        }
+        tryUserDocs(activeToken);
+    });
+}
+
+function tryDefaultDocs() {
+    console.log('No active token, checking dowody[default]');
+    const allDocs = JSON.parse(safeGetItem('dowody') || '{}');
+    const defaultDocs = allDocs['default'] || [];
+    if (defaultDocs.length > 0) {
+        console.log('Found default documents:', defaultDocs.length);
+        yourCards.style.display = "block";
+        if (idCollector) idCollector.style.display = 'block';
+        idCollector.innerHTML = '';
+        defaultDocs.forEach((doc, index) => {
+            if (!doc.cardToken) {
+                doc.cardToken = 'card_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
             }
-            createLocalId(fallback, 0);
-            return;
-        }
-        yourCards.style.display = "none";
+            createLocalId(doc, index);
+        });
         return;
     }
-    
-    // Pobierz dowody dla aktualnego użytkownika
+    tryFallbacks();
+}
+
+function tryUserDocs(activeToken) {
     var activeKey = activeToken || 'default';
-    const allDocs = JSON.parse(localStorage.getItem('dowody')) || {};
-    // Fallback: jeśli nie ma dokumentów pod activeToken, sprawdź 'default'
+    const allDocs = JSON.parse(safeGetItem('dowody') || '{}');
     var userDocs = allDocs[activeKey] || [];
     if (userDocs.length === 0 && activeKey !== 'default') {
         userDocs = allDocs['default'] || [];
         if (userDocs.length > 0) {
-            // Przenieś na aktywny klucz
             allDocs[activeKey] = userDocs;
             delete allDocs['default'];
-            localStorage.setItem('dowody', JSON.stringify(allDocs));
+            safeSetItem('dowody', JSON.stringify(allDocs));
         }
     }
-    
-    console.log('Found documents for user:', userDocs.length);
-    
-    if (userDocs.length === 0) {
-        console.log('No documents in dowody, trying fallbacks...');
-        // Fallback 1: formData/cardData
-        let fallback = null;
-        try { fallback = JSON.parse(localStorage.getItem('formData') || 'null'); } catch(e) {}
-        if (!fallback) { try { fallback = JSON.parse(localStorage.getItem('cardData') || 'null'); } catch(e) {} }
-        if (fallback) {
-            if (!fallback.cardToken) {
-                fallback.cardToken = 'card_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-            }
-            // zapisz do dowody aby ujednolicić
-            const allDocs = JSON.parse(localStorage.getItem('dowody')) || {};
-            allDocs[activeToken] = [fallback];
-            localStorage.setItem('dowody', JSON.stringify(allDocs));
+    if (userDocs.length > 0) {
+        renderDocuments(userDocs);
+        return;
+    }
+    var allDocsObj = JSON.parse(safeGetItem('dowody') || '{}');
+    var found = false;
+    for (var k in allDocsObj) {
+        if (allDocsObj[k] && allDocsObj[k].length > 0) {
+            found = true;
+            allDocsObj[activeKey] = allDocsObj[k];
+            if (k !== activeKey) delete allDocsObj[k];
+            safeSetItem('dowody', JSON.stringify(allDocsObj));
+            userDocs = allDocsObj[activeKey];
+            break;
+        }
+    }
+    if (found) {
+        renderDocuments(userDocs);
+    } else {
+        tryFallbacks();
+    }
+}
 
-            yourCards.style.display = "block";
-            if (idCollector) idCollector.style.display = 'block';
-            idCollector.innerHTML = '';
-            createLocalId(fallback, 0);
-            return;
+function tryFallbacks() {
+    let fallback = null;
+    try { fallback = JSON.parse(safeGetItem('formData') || 'null'); } catch(e) {}
+    if (!fallback) { try { fallback = JSON.parse(safeGetItem('cardData') || 'null'); } catch(e) {} }
+    if (fallback) {
+        if (!fallback.cardToken) {
+            fallback.cardToken = 'card_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
         }
-        // Fallback 2: poszukaj dowodów zapisanych pod innymi tokenami
-        var allDocsObj = JSON.parse(localStorage.getItem('dowody') || '{}');
-        var found = false;
-        for (var k in allDocsObj) {
-            if (allDocsObj[k] && allDocsObj[k].length > 0) {
-                found = true;
-                // Przenieś na aktywny klucz
-                allDocsObj[activeKey] = allDocsObj[k];
-                if (k !== activeKey) delete allDocsObj[k];
-                localStorage.setItem('dowody', JSON.stringify(allDocsObj));
-                userDocs = allDocsObj[activeKey];
-                break;
-            }
-        }
-        if (found) {
-            // kontynuuj normalne wyświetlanie poniżej
-        } else {
-            yourCards.style.display = "none";
-            return;
-        }
+        const allDocs = JSON.parse(safeGetItem('dowody') || '{}');
+        var activeToken = safeGetItem('activeToken') || 'default';
+        allDocs[activeToken] = [fallback];
+        safeSetItem('dowody', JSON.stringify(allDocs));
+        yourCards.style.display = "block";
+        if (idCollector) idCollector.style.display = 'block';
+        idCollector.innerHTML = '';
+        createLocalId(fallback, 0);
+        return;
     }
-    
-    // Wyświetl dowody
+    yourCards.style.display = "none";
+}
+
+function renderDocuments(userDocs) {
     yourCards.style.display = "block";
     if (idCollector) idCollector.style.display = 'block';
-    idCollector.innerHTML = ''; // Wyczyść poprzednie dowody
-    
+    idCollector.innerHTML = '';
     userDocs.forEach((doc, index) => {
+        if (!doc.cardToken) {
+            doc.cardToken = 'card_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        }
         createLocalId(doc, index);
     });
-
-    // Ostateczny bezpiecznik: jeśli nadal nic nie ma, a istnieje formData/cardData, to pokaż
     if (idCollector && idCollector.children.length === 0) {
         let fb = null;
-        try { fb = JSON.parse(localStorage.getItem('formData') || 'null'); } catch(e) {}
-        if (!fb) { try { fb = JSON.parse(localStorage.getItem('cardData') || 'null'); } catch(e) {} }
+        try { fb = JSON.parse(safeGetItem('formData') || 'null'); } catch(e) {}
+        if (!fb) { try { fb = JSON.parse(safeGetItem('cardData') || 'null'); } catch(e) {} }
         if (fb) {
             if (!fb.cardToken) {
                 fb.cardToken = 'card_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
@@ -476,11 +480,11 @@ function createLocalId(doc, index) {
         doc.cardToken = 'card_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
         
         // Zapisz zaktualizowany dokument
-        var activeToken = localStorage.getItem('activeToken') || 'default';
-        const allDocs = JSON.parse(localStorage.getItem('dowody')) || {};
+        var activeToken = safeGetItem('activeToken') || 'default';
+        const allDocs = JSON.parse(safeGetItem('dowody') || '{}');
         if (!allDocs[activeToken]) allDocs[activeToken] = [];
         allDocs[activeToken][index] = doc;
-        localStorage.setItem('dowody', JSON.stringify(allDocs));
+        safeSetItem('dowody', JSON.stringify(allDocs));
     }
     
     var temp = template;
@@ -556,8 +560,6 @@ var deleteing = 0;
 
 function deleteId(id) {
     console.log('Delete ID clicked:', id);
-    const tokenValidation = validateToken(token);
-    if (token && (!tokenValidation || !tokenValidation.valid)) return;
     
     // Sprawdź czy to lokalny dowód
     if (typeof id === 'string' && id.startsWith('local_')) {
@@ -572,21 +574,19 @@ function deleteId(id) {
 
 function editId(id) {
     console.log('Edit ID clicked:', id);
-    const tokenValidation = validateToken(token);
-    if (token && (!tokenValidation || !tokenValidation.valid)) return;
     
     // Sprawdź czy to lokalny dowód
     if (typeof id === 'string' && id.startsWith('local_')) {
         const index = parseInt(id.replace('local_', ''));
         
         // Pobierz dane dowodu z localStorage
-        const activeToken = localStorage.getItem('activeToken') || 'default';
-        const allDocs = JSON.parse(localStorage.getItem('dowody')) || {};
+        const activeToken = safeGetItem('activeToken') || 'default';
+        const allDocs = JSON.parse(safeGetItem('dowody') || '{}');
         const userDocs = allDocs[activeToken] || [];
         
         if (userDocs[index]) {
             // Zapisz dane do edycji
-            localStorage.setItem('editingDocument', JSON.stringify({
+            safeSetItem('editingDocument', JSON.stringify({
                 index: index,
                 data: userDocs[index]
             }));
@@ -603,19 +603,19 @@ function enterId(cardToken) {
     console.log('Enter ID clicked with token:', cardToken);
     
     // Znajdź dokument po cardToken
-    const activeToken = localStorage.getItem('activeToken') || 'default';
-    const allDocs = JSON.parse(localStorage.getItem('dowody')) || {};
+    const activeToken = safeGetItem('activeToken') || 'default';
+    const allDocs = JSON.parse(safeGetItem('dowody') || '{}');
     const userDocs = allDocs[activeToken] || [];
     
     const doc = userDocs.find(d => d.cardToken === cardToken);
     if (doc) {
         try {
             // Zapisz minimalne dane w localStorage zgodnie z oczekiwaniami aplikacji id
-            localStorage.setItem('seriesAndNumber', doc.seriesAndNumber || '');
-            localStorage.setItem('birthDay', doc.birthday || '');
-            localStorage.setItem('givenDate', doc.givenDate || '');
-            localStorage.setItem('expiryDate', doc.expiryDate || '');
-            localStorage.setItem('pesel', doc.pesel || '');
+            safeSetItem('seriesAndNumber', doc.seriesAndNumber || '');
+            safeSetItem('birthDay', doc.birthday || '');
+            safeSetItem('givenDate', doc.givenDate || '');
+            safeSetItem('expiryDate', doc.expiryDate || '');
+            safeSetItem('pesel', doc.pesel || '');
 
             // Zapisz w IndexedDB strukturę zgodną z flow.js (data)
             const dataPayload = {

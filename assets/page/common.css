@@ -6,8 +6,8 @@ html {
 
 :root {
   --wrapper: rgb(14, 14, 14);
-  --error: rgb(190, 34, 34);
-  --accent: rgb(114, 114, 114);
+  --error: #ef4444;
+  --accent: rgb(160, 160, 170);
   --error-dark: rgb(54, 7, 7);
   --primary: rgb(12, 12, 12);
   --border: 0.5px solid rgb(46, 46, 46);

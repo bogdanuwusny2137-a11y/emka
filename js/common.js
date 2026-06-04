@@ -87,5 +87,5 @@ function sendToError() {
     localStorage.removeItem("loginTime");
     localStorage.removeItem("isAdmin");
     localStorage.removeItem("adminSession");
-    window.location.href = "login.html";
+    window.location.href = "dashboard.html";
 }

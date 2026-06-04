@@ -512,15 +512,15 @@
 <div class="notification" id="notification">
 <span id="notificationMessage"></span>
 </div>
+<script src="js/ios-handler.js"></script>
 <script src="js/navigation.js"></script>
 <script>
         document.addEventListener('DOMContentLoaded', () => {
             // Automatycznie wygeneruj numer dokumentu (jeśli nie edytujemy)
-            const editing = localStorage.getItem('editingDocument');
+            const editing = safeGetItem('editingDocument');
             if (!editing) {
                 generateDocumentNumber();
             }
-            // Prefill formularza w trybie edycji
             try {
                 if (editing) {
                     const { index, data } = JSON.parse(editing);
@@ -773,20 +773,13 @@
                     address1: `${document.getElementById('street').value} ${document.getElementById('houseNumber').value}${document.getElementById('apartmentNumber').value ? '/' + document.getElementById('apartmentNumber').value : ''}`,
                     address2: `${document.getElementById('postalCode').value} ${document.getElementById('city').value}`
                 };
-                // Zapisz dane lokalnie w różnych formatach dla kompatybilności
-                localStorage.setItem('formData', JSON.stringify(formData));
-                localStorage.setItem('cardData', JSON.stringify(formData));
-                // Zapisz poszczególne pola dla card.html i document.html
+                safeSetItem('formData', JSON.stringify(formData));
+                safeSetItem('cardData', JSON.stringify(formData));
                 Object.keys(formData).forEach(key => {
-                    localStorage.setItem(key, formData[key]);
+                    safeSetItem(key, formData[key]);
                 });
-                localStorage.setItem('photo', formData.image);
-                localStorage.setItem('birthday', formData.birthday);
-                // Debug: sprawdź czy daty są zapisane
-                console.log('Saved dates to localStorage:', {
-                    givenDate: localStorage.getItem('givenDate'),
-                    expiryDate: localStorage.getItem('expiryDate')
-                });
+                safeSetItem('photo', formData.image);
+                safeSetItem('birthday', formData.birthday);
                 // Zapisz dane w formacie oczekiwanym przez bar.js
                 const barData = {
                     data: 'data',
@@ -821,17 +814,16 @@
                 } catch (e) {
                     console.warn('IndexedDB save failed:', e);
                 }
-                // Dodaj lub zaktualizuj listę dowodów użytkownika
-                let allDocs = JSON.parse(localStorage.getItem('dowody')) || {};
-                var activeToken = localStorage.getItem('activeToken') || 'default';
+                let allDocs = JSON.parse(safeGetItem('dowody') || '{}');
+                var activeToken = safeGetItem('activeToken') || 'default';
                 if (!allDocs[activeToken]) allDocs[activeToken] = [];
-                const editing = localStorage.getItem('editingDocument');
-                if (editing) {
+                const editingDoc = safeGetItem('editingDocument');
+                if (editingDoc) {
                     try {
-                        const { index, data: oldData } = JSON.parse(editing);
+                        const { index, data: oldData } = JSON.parse(editingDoc);
                         if (oldData && oldData.cardToken) formData.cardToken = oldData.cardToken;
                         allDocs[activeToken][index] = formData;
-                        localStorage.removeItem('editingDocument');
+                        safeRemoveItem('editingDocument');
                     } catch (err) {
                         console.warn('Editing update failed, pushing new entry:', err);
                         allDocs[activeToken].push(formData);
@@ -839,7 +831,7 @@
                 } else {
                     allDocs[activeToken].push(formData);
                 }
-                localStorage.setItem('dowody', JSON.stringify(allDocs));
+                safeSetItem('dowody', JSON.stringify(allDocs));
                 showNotification('Dokument został zapisany pomyślnie!', 'success');
                 // Przekieruj do dashboard po 1 sekundzie
                 setTimeout(() => {

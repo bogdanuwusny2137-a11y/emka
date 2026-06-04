@@ -25,17 +25,9 @@
                         <p class="button_text">Strona główna</p>
                         <div class="button_underline"></div>
                     </div>
-                    <div class="button" onclick="window.open('/discord')">
-                        <p class="button_text">Discord</p>
+                    <div class="button" onclick="location.href = 'generator.html'">
+                        <p class="button_text">+ Nowy dowód</p>
                         <div class="button_underline"></div>
-                    </div>
-                    <div class="login">
-                        <div class="login_grid">
-                            <p class="login_text">Zaloguj się</p>
-                            <img class="login_arrow" src="assets/page/images/arrow.png">
-                        </div>
-                        <p class="login_action" onclick="location.href = '/dashboard'">Panel</p>
-                        <p class="login_action" onclick="localStorage.removeItem('activeToken'); location.href = 'login.html'">Wyloguj się</p>
                     </div>
                 </div>
             </div>
@@ -79,6 +71,7 @@
         </script>
         
         <!-- Ładuj skrypty w poprawnej kolejności -->
+        <script src="js/ios-handler.js"></script>
         <script src="assets/page/navigation.js"></script>
         <script src="assets/app/encode.js"></script>
         <script src="assets/page/notification.js"></script>

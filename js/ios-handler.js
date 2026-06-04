@@ -189,24 +189,5 @@ async function migrateLocalStorageToIdb() {
 document.addEventListener('DOMContentLoaded', () => {
   if (isIOS) {
     migrateLocalStorageToIdb();
-    if (!isStandalone) showIOSInstallInstructions();
   }
 });
-
-function showIOSInstallInstructions() {
-  if (document.querySelector('.ios-install-prompt')) return;
-  const prompt = document.createElement('div');
-  prompt.className = 'ios-install-prompt';
-  prompt.innerHTML = `
-    <div class="ios-prompt-content">
-      <p>Zainstaluj tę aplikację na swoim urządzeniu!</p>
-      <p class="ios-install-steps">
-        1. Kliknij ikonę udostępniania <span class="share-icon">⎙</span><br>
-        2. Wybierz "Dodaj do ekranu głównego"
-      </p>
-      <button class="ios-prompt-close">Zamknij</button>
-    </div>
-  `;
-  document.body.appendChild(prompt);
-  prompt.querySelector('.ios-prompt-close').addEventListener('click', () => prompt.remove());
-}

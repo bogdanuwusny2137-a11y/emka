@@ -1,12 +1,12 @@
 var idCollector = document.querySelector(".id_collector");
 
 var guide = document.querySelector(".guide");
-var guideOpacity = guide.querySelector(".box_opacity");
+var guideOpacity = guide ? guide.querySelector(".box_opacity") : null;
 var guideClose = document.querySelector(".guide_close");
 var guideOpen = document.querySelector(".guide_button");
 
 var confirm = document.querySelector(".confirm");
-var confirmOpacity = confirm.querySelector(".box_opacity");
+var confirmOpacity = confirm ? confirm.querySelector(".box_opacity") : null;
 var confirmYes = document.querySelector(".confirm_yes");
 var confirmNo = document.querySelector(".confirm_no");
 

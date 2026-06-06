@@ -313,6 +313,11 @@ body .bottom_bar{
     grid-template-columns: repeat(3, calc(100% / 3));
 }
 
+.top_grid_fixed {
+    position: relative;
+    top: 0;
+}
+
 .time_text{
     margin-top: 70px;
     margin-bottom: 20px;

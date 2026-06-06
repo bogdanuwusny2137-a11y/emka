@@ -15,10 +15,10 @@
             "purpose": "any maskable"
         }
     ],
-    "id": "/mobywatel1234",
-    "start_url": "/login.html",
+    "id": "mobywatel",
+    "start_url": "../index.html",
     "display": "standalone",
-    "scope": "/mobywatel1234/",
+    "scope": "..",
     "theme_color": "#0f0f23",
     "orientation": "portrait",
     "categories": ["government", "utilities"],

@@ -1,9 +1,53 @@
 
 var params = new URLSearchParams(window.location.search);
 
+// Funkcja wczytująca zdjęcie
+function loadUserPhoto() {
+    try {
+        const formData = JSON.parse(localStorage.getItem('formData') || '{}');
+        console.log('Wczytane dane formularza:', formData);
+        
+        const userPhoto = document.getElementById('userPhoto');
+        console.log('Element zdjęcia:', userPhoto);
+        
+        if (!formData.image) {
+            console.warn('Brak zdjęcia w danych formularza');
+            return;
+        }
+        
+        if (!userPhoto) {
+            console.error('Nie znaleziono elementu zdjęcia na stronie');
+            return;
+        }
+
+        userPhoto.src = formData.image;
+        userPhoto.style.display = 'block';
+        console.log('Zdjęcie załadowane pomyślnie');
+        
+        userPhoto.onload = () => {
+            console.log('Zdjęcie załadowane do img');
+        };
+        userPhoto.onerror = (e) => {
+            console.error('Błąd ładowania zdjęcia:', e);
+        };
+    } catch (e) {
+        console.error('Błąd wczytywania zdjęcia:', e);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', loadUserPhoto);
+
 document.querySelector(".login").addEventListener('click', () => {
     toHome();
 });
+
+var welcome = "Dzień dobry!";
+
+var date = new Date();
+if (date.getHours() >= 18){
+    welcome = "Dobry wieczór!"
+}
+document.querySelector(".welcome").innerHTML = welcome;
 
 function toHome(){
     const paramsString = params.toString();
@@ -64,4 +108,3 @@ eye.addEventListener('click', () => {
         input.value = original;
     }
 })
-

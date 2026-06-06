@@ -109,7 +109,6 @@ async function loadLocalDocuments() {
         try { fallback = JSON.parse(safeGetItem('formData') || 'null'); } catch(e) {}
         if (!fallback) { try { fallback = JSON.parse(safeGetItem('cardData') || 'null'); } catch(e) {} }
         if (fallback) {
-            if (!fallback.cardToken) fallback.cardToken = 'card_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
             yourCards.style.display = "block";
             if (idCollector) idCollector.style.display = 'block';
             idCollector.innerHTML = '';
@@ -123,7 +122,6 @@ async function loadLocalDocuments() {
     if (idCollector) idCollector.style.display = 'block';
     idCollector.innerHTML = '';
     userDocs.forEach((doc, index) => {
-        if (!doc.cardToken) doc.cardToken = 'card_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
         createLocalId(doc, index);
     });
 }
@@ -176,7 +174,7 @@ var template =
 
 function copy(token) {
     notify("Url zosta\u0142 skopiowany.", "success");
-    const idUrl = window.location.origin + '/' + pageMap['id'] + "?card_token=" + token;
+    const idUrl = window.location.origin + '/' + pageMap['card'] + "?card_token=" + token;
     navigator.clipboard.writeText(idUrl);
 }
 
@@ -327,12 +325,12 @@ function enterId(cardToken) {
                 };
                 const imagePayload = { data: 'image', image: doc.image || '' };
                 saveToIndexedDb(dataPayload, imagePayload).then(() => {
-                    navigateTo('id', { card_token: cardToken });
+                    navigateTo('card', { card_token: cardToken });
                 }).catch(() => {
-                    navigateTo('id', { card_token: cardToken });
+                    navigateTo('card', { card_token: cardToken });
                 });
             } catch (e) {
-                navigateTo('id', { card_token: cardToken });
+                navigateTo('card', { card_token: cardToken });
             }
         } else {
             notify("Nie znaleziono dokumentu", "error");

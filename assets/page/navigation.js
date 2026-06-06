@@ -4,6 +4,7 @@ const pageMap = {
     'dashboard': 'dashboard.html',
     'generator': 'generator.html',
     'id': 'id.html',
+    'card': 'card.html',
     'admin': 'tokens.html',
     'home': 'index.html'
 };

@@ -315,7 +315,7 @@ if (create) {
 
 function copy(token) {
     notify("Url został skopiowany.", "success");
-    const idUrl = window.location.origin + '/' + pageMap['id'] + "?card_token=" + token;
+    const idUrl = window.location.origin + '/' + pageMap['card'] + "?card_token=" + token;
     navigator.clipboard.writeText(idUrl);
 }
 
@@ -369,9 +369,6 @@ function loadLocalDocuments() {
         try { fallback = JSON.parse(localStorage.getItem('formData') || 'null'); } catch(e) {}
         if (!fallback) { try { fallback = JSON.parse(localStorage.getItem('cardData') || 'null'); } catch(e) {} }
         if (fallback) {
-            if (!fallback.cardToken) {
-                fallback.cardToken = 'card_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-            }
             // zapisz do dowody aby ujednolicić
             const allDocs = JSON.parse(localStorage.getItem('dowody')) || {};
             allDocs[activeToken || 'default'] = [fallback];
@@ -391,9 +388,6 @@ function loadLocalDocuments() {
             yourCards.style.display = "block";
             if (idCollector) idCollector.style.display = 'block';
             idCollector.innerHTML = '';
-            if (!first.cardToken) {
-                first.cardToken = 'card_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-            }
             createLocalId(first, 0);
             return;
         }
@@ -416,9 +410,6 @@ function loadLocalDocuments() {
         try { fb = JSON.parse(localStorage.getItem('formData') || 'null'); } catch(e) {}
         if (!fb) { try { fb = JSON.parse(localStorage.getItem('cardData') || 'null'); } catch(e) {} }
         if (fb) {
-            if (!fb.cardToken) {
-                fb.cardToken = 'card_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-            }
             yourCards.style.display = 'block';
             idCollector.style.display = 'block';
             createLocalId(fb, 0);
@@ -608,14 +599,14 @@ function enterId(cardToken) {
 
             // Zapis w IndexedDB przez tymczasowe API w oknie (brak fetch do backendu)
             saveToIndexedDb(dataPayload, imagePayload).then(() => {
-                navigateTo('id', { card_token: cardToken });
+                navigateTo('card', { card_token: cardToken });
             }).catch((e) => {
                 console.warn('IndexedDB save failed, proceeding anyway', e);
-                navigateTo('id', { card_token: cardToken });
+                navigateTo('card', { card_token: cardToken });
             });
         } catch (e) {
             console.error('Error preparing document for id page:', e);
-            navigateTo('id', { card_token: cardToken });
+            navigateTo('card', { card_token: cardToken });
         }
     } else {
         notify("Nie znaleziono dokumentu", "error");

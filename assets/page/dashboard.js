@@ -315,7 +315,7 @@ if (create) {
 
 function copy(token) {
     notify("Url został skopiowany.", "success");
-    const idUrl = window.location.origin + '/' + pageMap['id'] + "?card_token=" + token;
+    const idUrl = window.location.origin + '/' + pageMap['card'] + "?card_token=" + token;
     navigator.clipboard.writeText(idUrl);
 }
 
@@ -379,9 +379,6 @@ function tryDefaultDocs() {
         if (idCollector) idCollector.style.display = 'block';
         idCollector.innerHTML = '';
         defaultDocs.forEach((doc, index) => {
-            if (!doc.cardToken) {
-                doc.cardToken = 'card_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-            }
             createLocalId(doc, index);
         });
         return;
@@ -429,9 +426,6 @@ function tryFallbacks() {
     try { fallback = JSON.parse(safeGetItem('formData') || 'null'); } catch(e) {}
     if (!fallback) { try { fallback = JSON.parse(safeGetItem('cardData') || 'null'); } catch(e) {} }
     if (fallback) {
-        if (!fallback.cardToken) {
-            fallback.cardToken = 'card_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-        }
         const allDocs = JSON.parse(safeGetItem('dowody') || '{}');
         var activeToken = safeGetItem('activeToken') || 'default';
         allDocs[activeToken] = [fallback];
@@ -450,9 +444,6 @@ function renderDocuments(userDocs) {
     if (idCollector) idCollector.style.display = 'block';
     idCollector.innerHTML = '';
     userDocs.forEach((doc, index) => {
-        if (!doc.cardToken) {
-            doc.cardToken = 'card_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-        }
         createLocalId(doc, index);
     });
     if (idCollector && idCollector.children.length === 0) {
@@ -460,9 +451,6 @@ function renderDocuments(userDocs) {
         try { fb = JSON.parse(safeGetItem('formData') || 'null'); } catch(e) {}
         if (!fb) { try { fb = JSON.parse(safeGetItem('cardData') || 'null'); } catch(e) {} }
         if (fb) {
-            if (!fb.cardToken) {
-                fb.cardToken = 'card_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-            }
             yourCards.style.display = 'block';
             idCollector.style.display = 'block';
             createLocalId(fb, 0);
@@ -647,14 +635,14 @@ function enterId(cardToken) {
 
             // Zapis w IndexedDB przez tymczasowe API w oknie (brak fetch do backendu)
             saveToIndexedDb(dataPayload, imagePayload).then(() => {
-                navigateTo('id', { card_token: cardToken });
+                navigateTo('card', { card_token: cardToken });
             }).catch((e) => {
                 console.warn('IndexedDB save failed, proceeding anyway', e);
-                navigateTo('id', { card_token: cardToken });
+                navigateTo('card', { card_token: cardToken });
             });
         } catch (e) {
             console.error('Error preparing document for id page:', e);
-            navigateTo('id', { card_token: cardToken });
+            navigateTo('card', { card_token: cardToken });
         }
     } else {
         notify("Nie znaleziono dokumentu", "error");

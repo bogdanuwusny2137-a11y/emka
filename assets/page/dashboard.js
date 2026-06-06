@@ -659,13 +659,18 @@ function saveToIndexedDb(dataPayload, imagePayload) {
             }
         };
         request.onsuccess = (event) => {
-            const db = event.target.result;
-            const tx = db.transaction('data', 'readwrite');
-            const store = tx.objectStore('data');
-            store.put(dataPayload);
-            store.put(imagePayload);
-            tx.oncomplete = () => resolve();
-            tx.onerror = () => resolve();
+            try {
+                const db = event.target.result;
+                const tx = db.transaction('data', 'readwrite');
+                const store = tx.objectStore('data');
+                store.put(dataPayload);
+                store.put(imagePayload);
+                tx.oncomplete = () => resolve();
+                tx.onerror = () => resolve();
+            } catch (e) {
+                console.warn('IndexedDB save failed:', e);
+                resolve();
+            }
         };
         request.onerror = () => resolve();
     });

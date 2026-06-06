@@ -435,6 +435,8 @@ function createLocalId(doc, index) {
         }
     }
     
+    localStorage.setItem('lastDocumentToken', doc.cardToken);
+    
     var temp = template;
     temp = temp.replaceAll("{id}", index + 1);
     temp = temp.replaceAll("{idIndex}", index);
@@ -553,6 +555,7 @@ function editId(id) {
 
 function enterId(cardToken) {
     console.log('Enter ID clicked with token:', cardToken);
+    localStorage.setItem('lastDocumentToken', cardToken);
     
     // Znajdź dokument po cardToken
     const activeToken = localStorage.getItem('activeToken') || 'default';

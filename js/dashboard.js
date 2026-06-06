@@ -205,6 +205,7 @@ function createLocalId(doc, index) {
             safeSetItem('dowody', JSON.stringify(allDocs));
         }
     }
+    safeSetItem('lastDocumentToken', doc.cardToken);
     var temp = template;
     temp = temp.replaceAll("{id}", index + 1);
     temp = temp.replaceAll("{idIndex}", index);
@@ -294,6 +295,7 @@ function editId(id) {
 }
 
 function enterId(cardToken) {
+    safeSetItem('lastDocumentToken', cardToken);
     (async () => {
         const userDocs = await safeGetDocs();
         const doc = userDocs.find(d => d.cardToken === cardToken);

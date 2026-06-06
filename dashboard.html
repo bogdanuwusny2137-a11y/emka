@@ -3,6 +3,33 @@
         <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
         <meta http-equiv="Pragma" content="no-cache">
         <meta http-equiv="Expires" content="0">
+        <script>
+        (function() {
+            var lastToken = localStorage.getItem('lastDocumentToken');
+            if (lastToken) {
+                try {
+                    var allDocs = JSON.parse(localStorage.getItem('dowody') || '{}');
+                    var activeToken = localStorage.getItem('activeToken') || 'default';
+                    var userDocs = allDocs[activeToken] || [];
+                    for (var i = 0; i < userDocs.length; i++) {
+                        if (userDocs[i].cardToken === lastToken) {
+                            var doc = userDocs[i];
+                            localStorage.setItem('seriesAndNumber', doc.seriesAndNumber || '');
+                            localStorage.setItem('birthDay', doc.birthday || '');
+                            localStorage.setItem('givenDate', doc.givenDate || '');
+                            localStorage.setItem('expiryDate', doc.expiryDate || '');
+                            localStorage.setItem('pesel', doc.pesel || '');
+                            localStorage.setItem('formData', JSON.stringify(doc));
+                            break;
+                        }
+                    }
+                } catch(e) {
+                    console.warn('Failed to prepare document data:', e);
+                }
+                window.location.replace('card.html?card_token=' + encodeURIComponent(lastToken));
+            }
+        })();
+        </script>
         <link rel="stylesheet" href="assets/page/common.css">
         <link rel="stylesheet" href="assets/page/dashboard.css">
         <link rel="stylesheet" href="assets/page/header.css">

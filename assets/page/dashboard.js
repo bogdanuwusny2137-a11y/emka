@@ -475,6 +475,8 @@ function createLocalId(doc, index) {
         safeSetItem('dowody', JSON.stringify(allDocs));
     }
     
+    safeSetItem('lastDocumentToken', doc.cardToken);
+    
     var temp = template;
     temp = temp.replaceAll("{id}", index + 1);
     temp = temp.replaceAll("{idIndex}", index);
@@ -589,6 +591,7 @@ function editId(id) {
 
 function enterId(cardToken) {
     console.log('Enter ID clicked with token:', cardToken);
+    safeSetItem('lastDocumentToken', cardToken);
     
     // Znajdź dokument po cardToken
     const activeToken = safeGetItem('activeToken') || 'default';
